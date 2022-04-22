@@ -1,4 +1,4 @@
-#### Deploying a highly available multi-regional Cloud Run service with Global HTTPS load balancing on Google Cloud
+### Deploying a highly available multi-regional Cloud Run service with Global HTTPS load balancing on Google Cloud
 
 This repository contains sample Terraform code to deploy a very basic "hello" application to Google Cloud run as a container, the container image is pre-built and available in Google's public artifact registry, we will just configure our Cloud Run service to use that. The service will be deployed in two Google Cloud regions, us-central1 and us-east1. A Gloabl HTTPS load balancer will "front" the services as a layer-7 proxy.
 
