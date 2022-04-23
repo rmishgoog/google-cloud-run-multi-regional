@@ -17,7 +17,7 @@ Before you begin, please make sure you do the following:
 
 ![image](https://user-images.githubusercontent.com/102101947/162500749-2bed73b5-61c4-4f5f-b9a8-27358e3896dd.png)
 
-#### * Please note, that this tutorial uses Cloud Shell for the sake of simplicity, since Cloud Shell comes installed with automation tools like Hashicorp Terraform, Git CLI etc, there is no need to install any of the tools that are used in this demo. If you don't have access to Cloud Shell or Cloud Console, you can install gcloud SDK, terraform and Git CLI on your workstation and perform the steps listed here with few exceptions.*
+_Please note, that this tutorial uses Cloud Shell for the sake of simplicity, since Cloud Shell comes installed with automation tools like Hashicorp Terraform, Git CLI etc, there is no need to install any of the tools that are used in this demo. If you don't have access to Cloud Shell or Cloud Console, you can install gcloud SDK, terraform and Git CLI on your workstation and perform the steps listed here with few exceptions._
 
 Once the Cloud Shell instance is ready, first make sure you have the right configurations on the gcloud SDK before you issue any commands.
 
