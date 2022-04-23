@@ -167,4 +167,4 @@ _Serverless NEGs however do have certain limitations that one must be aware of (
 
 _Thank you for staying with me and I hope you enjoyed this short and simple tutorial._
 
-__P.S. - Opinions, architecture, views etc. shared in this example are of my own. The source code and guidelines are purely for demo/tutorial purposes and not seen as production ready. Google is not liable to provide any support, SLAs or patches for problems faced (if any) while running these examples in your environments.__
+_P.S. - Opinions, architecture, views etc. shared in this example are of my own. The source code and guidelines are purely for demo/tutorial purposes and not seen as production ready. Google is not liable to provide any support, SLAs or patches for problems faced (if any) while running these examples in your environments._
