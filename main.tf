@@ -137,8 +137,11 @@ resource "google_compute_region_network_endpoint_group" "cloudrun-neg-secondary"
 
 #Create a backend service with two backends, configure CloudRun services as NEGs.
 resource "google_compute_backend_service" "cloud-run-global-lb-backend-service" {
-  provider = google-beta
-  name     = "cloud-run-global-backend-service"
+  provider        = google-beta
+  name            = "cloud-run-global-backend-service"
+  security_policy = google_compute_security_policy.cloud-run-global-lb-armor-policies.id
+  #Not enabling CDN for this demo.
+  enable_cdn = false
   backend {
     group = google_compute_region_network_endpoint_group.cloudrun-neg-primary.id
   }
@@ -161,7 +164,7 @@ resource "google_compute_url_map" "cloud-run-global-lb" {
     default_service = google_compute_backend_service.cloud-run-global-lb-backend-service.id
   }
   host_rule {
-    hosts        = ["*"]
+    hosts        = [var.cloud_ep_domain]
     path_matcher = "cloud-run-global-lb-url-map-matcher"
   }
 }
@@ -183,6 +186,58 @@ resource "google_compute_global_forwarding_rule" "cloud-run-global-lb-forward" {
   port_range            = "443"
   ip_address            = var.global_ip_address
   target                = google_compute_target_https_proxy.cloud-run-global-lb-target-proxy.id
+}
+
+#Create a security policy for your backend services, this is provided by Cloud Armor
+resource "google_compute_security_policy" "cloud-run-global-lb-armor-policies" {
+  project = var.project
+  name = "cloud-run-lb-backend-security-policy"
+  #Define a rule to deny ingress from a 9.9.9.0/24 block DNS.
+  rule {
+    action   = "deny(403)"
+    priority = "1000"
+    match {
+      versioned_expr = "SRC_IPS_V1"
+      config {
+        src_ip_ranges = ["9.9.9.0/24"]
+      }
+    }
+    description = "Deny access to IPs in 9.9.9.0/24"
+  }
+  rule {
+    action   = "allow"
+    priority = "2147483647"
+    match {
+      versioned_expr = "SRC_IPS_V1"
+      config {
+        src_ip_ranges = ["*"]
+      }
+    }
+    description = "default rule to allow ingress"
+  }
+  #Define a rule to block any attempt for log4j exploits.  
+  rule {
+    action   = "deny(403)"
+    priority = "500"
+    match {
+      expr {
+        expression = "evaluatePreconfiguredExpr('cve-canary')"
+      }
+    }
+  }
+  #Define a rule to block all the request if they are coming from AU region, outright deny since no customers in AU, no further evaluation will happen.
+  rule {
+    action   = "deny(403)"
+    priority = "100"
+    match {
+      expr {
+        expression = "origin.region_code == 'AU'"
+      }
+    }
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 output "global_ip_address" {
