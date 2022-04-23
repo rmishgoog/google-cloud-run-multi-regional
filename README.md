@@ -128,7 +128,7 @@ terraform apply -auto-approve
 ```
 _Wait for the terraform provisioning to finish. By the end of terraform execution, you have your multi-regional Cloud Run service behind a global HTTP(S) load balancer, with a domain name assigned and TLS certificates associated. TLS termination will take place at the global load balancer which acts as a proxy to your Cloud Run services. In this example we are in fact using Terraform to provision TLS certificates for the domain we reserved._
 
-_The process of provisioning certificates (we are using Google managed certificates in this example), associating to the domain (after domain is visible) and configuring it on the global load balancer may take some time, in certain cases up to 30 minutes, during this time, you will see the status of certificates as "PROVISIONING" before it finally turns to "ACTIVE". So, best thing to do here is to wait, similarly it may take a few minutes for changes to propagate to all the GFEs world-wide associating the IP to your global load balancing proxy before your webapp becomes available._
+_The process of provisioning certificates (we are using Google managed certificates in this example), associating to the domain (after domain is visible) and configuring it on the global load balancer may take some time, in certain cases up to 30-40 minutes, during this time, you will see the status of certificates as "PROVISIONING" before it finally turns to "ACTIVE". So, best thing to do here is to wait, similarly it may take a few minutes for changes to propagate to all the GFEs world-wide and associating the IP to your global load balancing proxy before your webapp becomes available._
 
 _So, just don't panic! Go, get yourself some coffee or take a brisk 10-15 minutes walk, after you are back, try accessing your service at:_
 
@@ -146,6 +146,10 @@ curl https://frontend.endpoints.<your project name>.cloud.goog/ -H 'X-Api-Versio
 ```
 _And the bad actor will be greeted by 403, denied error!_
 
+```
+<!doctype html><meta charset="utf-8"><meta name=viewport content="width=device-width, initial-scale=1"><title>403</title>403 Forbiddenrohitmishra@rmishra-dev:~/terraform-automation$ 
+```
+
 _That's it, you can go ahead and run terraform destroy to re-claim the infrastructure you had created for this tutorial._
 
 ```
@@ -157,5 +161,10 @@ _Remember that you reserved IP address outside of Terraform, so let's delete tha
 ```
 gcloud compute addresses delete cloud-run-lb-external
 ```
+_To summarize, in this tutorial we learned how to quickly deploy serverless containers with Google Cloud Run, configure a global load balancer for load distribution, high availability and resiliency and augment it security policies to mitigate common web threats at the edge._
+
+_Serverless NEGs however do have certain limitations that one must be aware of (such as no health checks) but we can hope that they will be addressed sooner than later, that being said you can still get around such scenarios using Cloud Logging and Monitoring, where you can define metrics based on global load balancer's logs and trigger automation to automatically remove the backend which is not responding or unavailable, adding it manually at a later point in time._
 
 _Thank you for staying with me and I hope you enjoyed this short and simple tutorial._
+
+__P.S. - Opinions, architecture, views etc. shared in this example are of my own. The source code and guidelines are purely for demo/tutorial purposes and not seen as production ready. Google is not liable to provide any support, SLAs or patches for problems faced (if any) while running these examples in your environments.__
