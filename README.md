@@ -3,20 +3,20 @@
 _This repository contains sample Terraform code to deploy a very basic "hello" application to Google Cloud run as a container, the container image is pre-built and available in Google's public artifact registry, we will just configure our Cloud Run service to use that. The service will be deployed in two Google Cloud regions, us-central1 and us-east1. A Gloabl HTTPS load balancer will "front" the services as a layer-7 proxy._
 
 _The services are configured as "serverless" network endpoint groups behind the load balancer and will be accessible publicly only via the load balancer, even though Google Cloud does yield a "run.app" domain for each Cloud Run service, our "ingress" controls will prevent any direct invocations of the Cloud Run generated domain URL. This will ensure that:_
-_1. We leverage Google Front End or GFE for global load distribution and locality, let GFE route the incoming request to the nearest backend.
-2. This will also improve serving latencies, thus serving the webpage from a Google data center closest to the end user.
-3. At the load balancer, we will also configure TLS certifactes and thus load balancer will also act as a point of TLS termination for the end user.
-4. Since we will be adding a few security policies (through Google Cloud Armor), routing all the incoming internet traffic through the global load balancer will ensure that thos security policies are applied and any malcious traffic is denied at the edge of the Google network._
+- _We leverage Google Front End or GFE for global load distribution and locality, let GFE route the incoming request to the nearest backend._
+- _This will also improve serving latencies, thus serving the webpage from a Google data center closest to the end user._
+- _At the load balancer, we will also configure TLS certifactes and thus load balancer will also act as a point of TLS termination for the end user._
+- _Since we will be adding a few security policies (through Google Cloud Armor), routing all the incoming internet traffic through the global load balancer will ensure that thos security policies are applied and any malcious traffic is denied at the edge of the Google network._
 
 _High Level Architecture:_
 ![cloud-run-simple-ha-gclb](https://user-images.githubusercontent.com/102101947/164895886-d084fd50-d426-4ac8-a0e8-62e275050eab.png)
 
 _Before you begin, please make sure you do the following:_
-_1. You should have an account, the account should have "owner" role at the project level, it's highly recommended that in your production environments you use the principle of least privileges and thus do not assign overly permissive roles to users/groups, however for the sake of simplicity here, we will use "project owner" role.
-2. At any point in time, choose security over convinience when dealing with your prod and non-prod environments, the demo does not guide on IAM best practices and thus uses privilged roles like "project owner", this by no means is Google's recommendation, it's okay do use permissive roles in demo/lab environments which will be re-cycled soon after.
-3. Once you have the account as stated in step-1, next step is to create a project, you can do that by directly logging into Google Cloud console, if you have "project owner" permissions, you shall be able to create new projects.
-4. After you have created the project, make sure it's selected in the "project" drop-down.
-5. Click on the "Activate Cloud Shell" icon towards the right corner of you screen and wait for your Cloud Shell instance to load._
+- _You should have an account, the account should have "owner" role at the project level, it's highly recommended that in your production environments you use the principle of least privileges and thus do not assign overly permissive roles to users/groups, however for the sake of simplicity here, we will use "project owner" role._
+- At any point in time, choose security over convinience when dealing with your prod and non-prod environments, the demo does not guide on IAM best practices and thus uses privilged roles like "project owner", this by no means is Google's recommendation, it's okay do use permissive roles in demo/lab environments which will be re-cycled soon after.
+- _Once you have the account as stated in step-1, next step is to create a project, you can do that by directly logging into Google Cloud console, if you have "project owner" permissions, you shall be able to create new projects._
+- _After you have created the project, make sure it's selected in the "project" drop-down._
+- _Click on the "Activate Cloud Shell" icon towards the right corner of you screen and wait for your Cloud Shell instance to load._
 
 ![image](https://user-images.githubusercontent.com/102101947/162500749-2bed73b5-61c4-4f5f-b9a8-27358e3896dd.png)
 
@@ -81,6 +81,9 @@ echo ${GCLB_IP}
 ```
 ```
 export PROJECT=$(gcloud config get-value project)
+```
+```
+gcloud services enable endpoints.googleapis.com
 ```
 ```
 cat <<EOF > dns-spec.yaml
